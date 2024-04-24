@@ -9,7 +9,7 @@ if (process.env.NODE_ENV === 'test') {
 
 // criar esquema para validação das ebv
 const envSchema = z.object({
-  NODE_ENV: z.enum(['dev', 'test', 'prod']).default('prod'),
+  NODE_ENV: z.enum(['dev', 'test', 'production']).default('production'),
   DATABASE_CLIENT: z.enum(['sqlite', 'pg']),
   DATABASE_URL: z.string(),
   PORT: z.coerce.number().default(3333),
