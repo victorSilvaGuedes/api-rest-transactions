@@ -7,5 +7,5 @@ app
     port: env.PORT,
   })
   .then(() => {
-    console.log('Servidor rodando em ➡️  http://localhost:3333 ✅')
+    console.log(`Servidor rodando em ➡️  http://localhost:${env.PORT} ✅`)
   })
