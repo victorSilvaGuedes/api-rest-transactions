@@ -18,9 +18,6 @@
   - Front-end -> abre a página de login, digite o texto 'victor@email.com' no campo de email, clique no botão
   - Back-end -> chamadas HTTP, websockets
 
-# Pirâmide de testes
-- E2E -> não dependem de nenhuma tecnologia, não dependem de arquitetura
-
 
 
 # Métodos HTTP:
