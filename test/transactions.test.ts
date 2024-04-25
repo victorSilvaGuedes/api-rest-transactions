@@ -14,6 +14,7 @@ describe('Transactions routes', () => {
     await app.close()
   })
 
+  // antes de cada teste 'reseta' o banco de dados
   beforeEach(() => {
     execSync('npm run knex migrate:rollback --all')
     execSync('npm run knex migrate:latest')
@@ -22,18 +23,21 @@ describe('Transactions routes', () => {
   // enunciado do teste
   test('User can create a new transaction', async () => {
     // operação do teste -> chamada http
+    // criando uma nova transação
     // supertest "cria" um servidor node puro para os testes
+    // usa a rota post /transactions, enviando no body title, amount e type
     await supertest(app.server)
       .post('/transactions')
       .send({
         title: 'Test transaction',
         amount: 5000,
-        type: 'debit',
+        type: 'credit',
       })
-      .expect(201) // validação do teste
+      .expect(201) // validação do teste -> espera receber o código 201
   })
 
   test('User can list all transactions', async () => {
+    // cria uma nova transação
     const createTransactionResponse = await supertest(app.server)
       .post('/transactions')
       .send({
@@ -42,14 +46,18 @@ describe('Transactions routes', () => {
         type: 'credit',
       })
 
+    // recupera os cookies do header da resposta
     const cookies = createTransactionResponse.get('Set-Cookie')!
 
-    const listTrasanctions = await supertest(app.server)
+    // lista todas transações, passando os cookies do usuário, esperando código 200
+    const listTrasanctionsResponse = await supertest(app.server)
       .get('/transactions')
       .set('Cookie', cookies)
       .expect(200)
 
-    expect(listTrasanctions.body.transactions).toEqual([
+    // espera receber o array transactions do body contendo todas transações
+    // e dentro de transações, uma transação que possui os dados enviados em title e amount (criada anteriormente)
+    expect(listTrasanctionsResponse.body.transactions).toEqual([
       expect.objectContaining({
         title: 'Test transaction',
         amount: 5000,
@@ -58,6 +66,7 @@ describe('Transactions routes', () => {
   })
 
   test('User can list a specific transaction', async () => {
+    // cria uma nova transação
     const createTransactionResponse = await supertest(app.server)
       .post('/transactions')
       .send({
@@ -66,20 +75,25 @@ describe('Transactions routes', () => {
         type: 'credit',
       })
 
+    // recupera os cookies
     const cookies = createTransactionResponse.get('Set-Cookie')!
 
-    const listTrasanctions = await supertest(app.server)
+    // lista todas transações esperando receber 200 e setando os cookies
+    const listTransactionsResponse = await supertest(app.server)
       .get('/transactions')
       .set('Cookie', cookies)
       .expect(200)
 
-    const transactionId = listTrasanctions.body.transactions[0].id
+    // recupera o id da transação criada (posição 0)
+    const transactionId = listTransactionsResponse.body.transactions[0].id
 
+    // lista a transação enviando o id recuperado anteriormente, junto dos cookies, esperando receber 200
     const getTransactionResponse = await supertest(app.server)
       .get(`/transactions/${transactionId}`)
       .set('Cookie', cookies)
       .expect(200)
 
+    // espera receber a transação que possui os valores enviados em title e amount (criada anteriormente)
     expect(getTransactionResponse.body.transaction).toEqual(
       expect.objectContaining({
         title: 'Test transaction',
@@ -89,6 +103,7 @@ describe('Transactions routes', () => {
   })
 
   test('User can get the summary', async () => {
+    // cria uma nova transação (type credit)
     const createTransactionResponse = await supertest(app.server)
       .post('/transactions')
       .send({
@@ -97,8 +112,10 @@ describe('Transactions routes', () => {
         type: 'credit',
       })
 
+    // recupera os cookies
     const cookies = createTransactionResponse.get('Set-Cookie')!
 
+    // cria uma nova transação (type debit)
     await supertest(app.server)
       .post('/transactions')
       .set('Cookie', cookies)
@@ -108,11 +125,13 @@ describe('Transactions routes', () => {
         type: 'debit',
       })
 
+    // recupera as transações do usuário, esperando 200
     const summaryResponse = await supertest(app.server)
       .get('/transactions/summary')
       .set('Cookie', cookies)
       .expect(200)
 
+    // espera receber summary com o valor 3000
     expect(summaryResponse.body.summary).toEqual({
       amount: 3000,
     })
