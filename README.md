@@ -1,3 +1,15 @@
+# Para iniciar o projeto localmente:
+- Clone o repositório
+- No terminal digite "npm install"
+- Crie as variáveis de ambiente como as que estão no exemplo .env.example
+- No terminal digite "npm run knex -- migrate:latest" para criar as migrações do banco de dados
+- No terminal digite "npm run dev"
+- Pronto, o projeto estará rodando na porta 3333 do localhost
+
+# Para testes
+- Crie as variáveis de ambiente como as que estão no exemplo .env.test.example
+- No terminal digite "npm test"
+
 # Anotações feitas durante as aulas
 ## Requisitos funcionais
 - O usuário deve poder criar uma nova transação ✔️
