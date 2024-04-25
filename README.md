@@ -1,3 +1,4 @@
+# Anotações feitas durante as aulas
 ## Requisitos funcionais
 - O usuário deve poder criar uma nova transação ✔️
 - O usuário deve poder obter um resumo da sua conta ✔️
